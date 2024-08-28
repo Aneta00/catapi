@@ -1,95 +1,79 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { CatCard } from 'components/CatCard';
+import { CatImage } from 'types/CatImage';
+import { Column, Grid } from 'components/Grid';
+import { Body1, H1 } from 'components/Typography';
+import { TopNav } from 'components/TopNav';
+import { styled } from 'styled-components';
 
-export default function Home() {
+
+const Home = () => {
+  const [cats, setCats] = useState<CatImage[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append( 'x-api-key', process.env.NEXT_PUBLIC_CAT_API_KEY as string);
+
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+      redirect: 'follow' as RequestRedirect,
+    };
+
+    fetch(
+      'https://api.thecatapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=16',
+      requestOptions
+    )
+      .then(response => response.json())
+      .then(data => {
+        setCats(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.log('Error fetching cat images:', error);
+        setLoading(false);
+        setError(error)
+      });
+  }, []);
+
+  if(error) {
+    return (
+      <>
+        <TopNav />
+        <main>
+          <Body1>Error getting images</Body1>
+        </main>
+      </>
+    )
+  }
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <>
+    <TopNav />
+      <StyledMain>
+        <H1>Random Cats</H1>
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <Grid>
+            {cats.map(cat => (
+              <Column lg={3} md={6} sm={6} xs={12}>
+                <CatCard cat={cat} />
+              </Column>         
+            ))}
+          </Grid>
+        )}
+      </StyledMain>
+    </>
   );
 }
+
+export default Home;
+
+const StyledMain = styled.main`
+  padding: 
+`
