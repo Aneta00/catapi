@@ -1,6 +1,12 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button, Upload, Typography, Spin, message } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import styled from 'styled-components';
+import { TopNav } from 'components/TopNav';
+
+const { Title, Text } = Typography;
 
 const UploadPage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -11,6 +17,8 @@ const UploadPage = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setSelectedFile(e.target.files[0]);
+      setError(null); 
+      message.success(`${e.target.files[0].name} file selected successfully.`);
     }
   };
 
@@ -36,6 +44,7 @@ const UploadPage = () => {
       });
 
       if (response.ok) {
+        message.success('Image uploaded successfully!');
         router.push('/');
       } else {
         const errorData = await response.json();
@@ -49,15 +58,37 @@ const UploadPage = () => {
   };
 
   return (
-    <div>
-      <h1>Upload an Image</h1>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload} disabled={loading}>
-        {loading ? 'Uploading...' : 'Upload'}
-      </button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </div>
+    <>
+      <TopNav />
+      <StyledMain>
+        <Title level={2}>Upload an Image</Title>
+        <input 
+          type="file" 
+          onChange={handleFileChange} 
+          accept="image/*"
+          style={{ marginBottom: 16 }}
+        />
+        <Button
+          type="primary"
+          onClick={handleUpload}
+          disabled={loading || !selectedFile}
+          style={{ marginTop: 16 }}
+        >
+          {loading ? <Spin /> : 'Upload'}
+        </Button>
+        {error && <Text type="danger" style={{ marginTop: 16 }}>{error}</Text>}
+      </StyledMain>
+    </>
   );
 };
 
 export default UploadPage;
+
+const StyledMain = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+`;
