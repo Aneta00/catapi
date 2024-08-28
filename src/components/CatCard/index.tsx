@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Button, message } from 'antd';
-import { HeartOutlined, HeartFilled } from '@ant-design/icons';
+import { HeartOutlined, HeartFilled, UpOutlined, DownOutlined } from '@ant-design/icons';
 import { CatImage } from 'types/CatImage';
 import { styled } from 'styled-components';
-
 
 interface CatCardProps {
   cat: CatImage;
@@ -12,6 +11,7 @@ interface CatCardProps {
 export const CatCard = ({ cat }: CatCardProps) => {
   const [isFavourite, setIsFavourite] = useState<boolean>(false);
   const [favouriteId, setFavouriteId] = useState<string | null>(null);
+  const [score, setScore] = useState<number>(0);
 
   const handleFavouriteToggle = () => {
     const headers = new Headers();
@@ -55,11 +55,54 @@ export const CatCard = ({ cat }: CatCardProps) => {
     }
   };
 
+  const handleVote = (value: number) => {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('x-api-key', process.env.NEXT_PUBLIC_CAT_API_KEY as string);
+
+    fetch('https://api.thecatapi.com/v1/votes', {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ image_id: cat.id, value }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message === 'SUCCESS') {
+          setScore(prevScore => prevScore + value);
+          message.success(`Voted ${value === 1 ? 'up' : 'down'} successfully.`);
+        }
+      })
+      .catch(error => {
+        console.error('Error voting:', error);
+        message.error('Failed to vote.');
+      });
+  };
+
+  useEffect(() => {
+    // Fetch existing votes for this cat
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('x-api-key', process.env.NEXT_PUBLIC_CAT_API_KEY as string);
+
+    fetch(`https://api.thecatapi.com/v1/votes?attach_image=1&image_id=${cat.id}`, {
+      method: 'GET',
+      headers: headers,
+    })
+      .then(response => response.json())
+      .then(data => {
+        const currentScore = data.reduce((acc: number, vote: { value: number }) => acc + vote.value, 0);
+        setScore(currentScore);
+      })
+      .catch(error => {
+        console.error('Error fetching votes:', error);
+      });
+  }, [cat.id]);
+
   return (
     <Card
       hoverable
       cover={
-      <StyledImage>
+        <StyledImage>
           <img alt="A random cat" src={cat.url} />
         </StyledImage>
       }
@@ -71,22 +114,38 @@ export const CatCard = ({ cat }: CatCardProps) => {
       >
         {isFavourite ? 'Remove favourite' : 'Add to favourite'}
       </Button>
+      <VoteContainer>
+        <Button onClick={() => handleVote(1)} icon={<UpOutlined />} />
+        <ScoreDisplay>{score}</ScoreDisplay>
+        <Button onClick={() => handleVote(-1)} icon={<DownOutlined />} />
+      </VoteContainer>
     </Card>
   );
 };
 
 const StyledImage = styled.div`
-    width: 100%;
-  height: 300px;
+  width: 100%;
+  height: 30rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden; 
+  overflow: hidden;
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover; 
+    object-fit: cover;
   }
-`
+`;
 
+const VoteContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+`;
+
+const ScoreDisplay = styled.span`
+  font-size: 1.6rem;
+  font-weight: bold;
+`;
