@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This is a [Next.js](https://nextjs.org/) project that uses [The Cat Api](https://thecatapi.com/)
 
 ## Getting Started
 
-First, run the development server:
+1. First in the root of the project create '.env.local' file and add your api key var:
+
+NEXT_PUBLIC_CAT_API_KEY=""
+
+2. Then, run the development server:
 
 ```bash
-npm run dev
-# or
+
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Notes
 
-## Learn More
+- Next.js app with styled components as css tool. 
+- I created two components: Grid and Typography to show how I would normally set it up when building components for the design system or components for specific project. 
+- Wouldn't normally used third party ui libraries for big production projects, but used Ant Design for the rest of the components to save time. Used Ant Design for the reason just to make it a bit different and not use MUI. 
+- My Api key is stored in .env.local file 
 
-To learn more about Next.js, take a look at the following resources:
+## Challenges
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Set it up to display all the images from the Api at first, before figured out how to show only images uploaded by a specific user. I set 'sub_id' to be the same as 'user_id' found in '/favourites' endpoint.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- Added voting functionality at first inside the Card component, but it was causing issues with calculations as the data returned from votes is not accumulated but is spread as 1 vote per row, so I then moved the voting counting to the parent and created a map of sum of votes and store it in the state and pass it down to the single card. 
 
-## Deploy on Vercel
+## Improvements if more time:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- More separation of pages and components
+- Add storybook to manage components
+- Add visual regression testing to storybook (screenshot comparison)
+- Add unit tests / React Testing Library tests to components 
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
