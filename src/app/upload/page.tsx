@@ -1,12 +1,13 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Upload, Typography, Spin, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Button, Typography, Spin, message } from 'antd';
 import styled from 'styled-components';
 import { TopNav } from 'components/TopNav';
 
 const { Title, Text } = Typography;
+
+const user_id = '9l0qj6'
 
 const UploadPage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -33,6 +34,8 @@ const UploadPage = () => {
 
     const formData = new FormData();
     formData.append('file', selectedFile);
+    formData.append('sub_id', user_id);
+  
 
     try {
       const response = await fetch('https://api.thecatapi.com/v1/images/upload', {
