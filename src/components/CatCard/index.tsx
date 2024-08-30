@@ -1,18 +1,27 @@
+'use client'
 import { Button, Card, message } from 'antd';
 import { HeartOutlined, HeartFilled, UpOutlined, DownOutlined } from '@ant-design/icons';
 import { CatImage } from 'types/CatImage';
 import { styled } from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface CatCardProps {
   cat: CatImage;
   score: number;
+  isFavourite: boolean;
+  favouriteId: string | null;
   onVote: (catId: string, value: number) => void;
 }
 
-export const CatCard = ({ cat, score, onVote }: CatCardProps) => {
-  const [isFavourite, setIsFavourite] = useState<boolean>(false);
-  const [favouriteId, setFavouriteId] = useState<string | null>(null);
+export const CatCard = ({ cat, score, isFavourite: initialFavourite, favouriteId, onVote }: CatCardProps) => {
+  const [isFavourite, setIsFavourite] = useState<boolean>(initialFavourite);
+  const [currentFavouriteId, setFavouriteId] = useState<string | null>(favouriteId);
+
+  console.log('initialFavourite', initialFavourite, isFavourite)
+
+  useEffect(() => {
+    setIsFavourite(initialFavourite);
+  }, [initialFavourite]);
 
   const handleFavouriteToggle = () => {
     const headers = new Headers();
@@ -38,7 +47,7 @@ export const CatCard = ({ cat, score, onVote }: CatCardProps) => {
           message.error('Failed to mark as favourite.');
         });
     } else {
-      fetch(`https://api.thecatapi.com/v1/favourites/${favouriteId}`, {
+      fetch(`https://api.thecatapi.com/v1/favourites/${currentFavouriteId}`, {
         method: 'DELETE',
         headers: headers,
       })
