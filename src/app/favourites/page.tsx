@@ -32,7 +32,7 @@ const Favourites = () => {
         setFavourites(favouriteImages);
         setLoading(false);
         fetchVotes(headers);
-        console.log('favourites data', data);
+    
       })
       .catch(error => {
         console.log('Error fetching favourite cat images:', error);
@@ -80,7 +80,7 @@ const Favourites = () => {
             ...prevVotes,
             [catId]: (prevVotes[catId] || 0) + value
           }));
-          console.log('vote data', data);
+     
         }
       })
       .catch(error => {
@@ -88,7 +88,7 @@ const Favourites = () => {
       });
   };
 
-  console.log('favourites state', favourites);
+
 
   if (error) {
     return (

@@ -33,7 +33,7 @@ const Home = () => {
         setLoading(false);
         fetchVotes(headers);
         fetchFavourites(headers); 
-        console.log('full data', data)
+   
       })
       .catch(error => {
         console.log('Error fetching cat images:', error);
@@ -82,9 +82,7 @@ const Home = () => {
       });
   };
 
-  console.log('favourites', favourites)
 
-  
 
   const handleVote = (catId: string, value: number) => {
     const headers = new Headers();
@@ -103,7 +101,7 @@ const Home = () => {
             ...prevVotes,
             [catId]: (prevVotes[catId] || 0) + value
           }));
-          console.log('data', data)
+     
         }
       })
       .catch(error => {

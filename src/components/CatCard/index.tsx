@@ -17,7 +17,6 @@ export const CatCard = ({ cat, score, isFavourite: initialFavourite, favouriteId
   const [isFavourite, setIsFavourite] = useState<boolean>(initialFavourite);
   const [currentFavouriteId, setFavouriteId] = useState<string | null>(favouriteId);
 
-  console.log('initialFavourite', initialFavourite, isFavourite)
 
   useEffect(() => {
     setIsFavourite(initialFavourite);
