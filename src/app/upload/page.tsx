@@ -4,8 +4,9 @@ import { useRouter } from 'next/navigation';
 import { Button, Typography, Spin, message } from 'antd';
 import styled from 'styled-components';
 import { TopNav } from 'components/TopNav';
+import { H1 } from 'components/Typography';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 const user_id = '9l0qj6'
 
@@ -64,7 +65,7 @@ const UploadPage = () => {
     <>
       <TopNav />
       <StyledMain>
-        <Title level={2}>Upload an Image</Title>
+        <H1>Upload an Image</H1>
         <input 
           type="file" 
           onChange={handleFileChange} 
